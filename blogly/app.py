@@ -4,7 +4,7 @@ import os
 
 from flask import Flask, request, redirect, render_template
 from flask_debugtoolbar import DebugToolbarExtension
-from werkzeug import NotFound
+from werkzeug.exceptions import NotFound
 
 from models import db, dbx, User
 
@@ -18,3 +18,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "i-will-never-tell")
 print("secret key=", app.config['SECRET_KEY'])
 
 debug = DebugToolbarExtension(app)
+
+@app.get("/new-user")
+def add_new_user():
+    return render_template("new_user_form.jinja")
