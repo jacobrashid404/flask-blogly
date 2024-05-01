@@ -1,6 +1,9 @@
 {% extends "base.jinja" %}
 {% block title %}Add New User{% endblock %}
 {% block content %}
+
+<h2>Create a User</h2>
+
     <form action="" method="POST" name="new_user_form">
         <div class="form-group">
             <label>First Name
@@ -19,4 +22,5 @@
         </div>
         <button type="submit" class="btn btn-success">Add</button>
     </form>
+
   {% endblock %}
