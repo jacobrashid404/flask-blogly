@@ -70,53 +70,22 @@ def add_user_from_form():
 def show_user_detail(user_id):
     """ Show information about given user. """
 
-    q = (
-        db.select(User)
-        .where(User.id == user_id)
-    )
+    user = db.get_or_404(User, user_id)
 
-    user = dbx(q).scalars().first()
-
-    # will handle an invalid user_id
-    if user == None:
-        flash("User not found :-(")
-        return redirect("/")
-
-    else:
-        return render_template(
-            "user_detail.jinja", user=user)
+    return render_template(
+        "user_detail.jinja", user=user)
 
 
 @app.get("/users/<int:user_id>/edit")
 def show_edit_page(user_id):
     """ Show the edit page for a user. """
 
-    q = (
-        db.select(User)
-        .where(User.id == user_id)
-    )
-
-    user = dbx(q).scalars().first()
+    user = db.get_or_404(User, user_id)
 
     # will handle an invalid user_id
     # TODO: check whether we need to validate any form data further
-    if user == None:
-        flash("User not found :-(")
-        return redirect("/")
-
-    # method 2: passing as user instance
-    else:
-        return render_template(
-            "edit_profile.jinja", user=user)
-
-    # method 1: passing as individual properties
-    # else:
-        # user_id = user.id
-        # first_name = user.first_name
-        # last_name = user.last_name
-        # img_url = user.img_url
-        # return render_template(
-        # "edit_profile.jinja", first_name=first_name, last_name=last_name, img_url=img_url, user_id=user_id)
+    return render_template(
+        "edit_profile.jinja", user=user)
 
 
 @app.post("/users/<int:user_id>/edit")
@@ -124,31 +93,21 @@ def process_edit_form(user_id):
     """Process edit user form => Get data from form and update database
     with new user information"""
 
-    q = (
-        db.select(User)
-        .where(User.id == user_id)
-    )
+    user = db.get_or_404(User, user_id)
 
-    user = dbx(q).scalars().first()
+    # get form data
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    img_url = request.form['img_url']
 
-    # will handle an invalid user_id
-    if user == None:
-        flash("User not found :-(")
+    # update database with new values
+    user.first_name = first_name
+    user.last_name = last_name
+    user.img_url = img_url
 
-    else:
-        # get form data
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        img_url = request.form['img_url']
+    flash(f"User details for {user.full_name} updated.")
 
-        # update database with new values
-        user.first_name = first_name
-        user.last_name = last_name
-        user.img_url = img_url
-
-        flash(f"User details for {user.full_name} updated.")
-
-        db.session.commit()
+    db.session.commit()
 
     return redirect("/")
 
@@ -157,19 +116,11 @@ def process_edit_form(user_id):
 def delete_user(user_id):
     """ Delete the user data and redirect to /users page. """
 
-    q = (
-        db.select(User)
-        .where(User.id == user_id)
-    )
+    user = db.get_or_404(User, user_id)
 
-    user = dbx(q).scalar().first()
-
-    # handle invalid user_id
-    if user == None:
-        flash("Nice try! You can't delete a nonexistent user.")
-
-    else:
-        db.session.delete(user)
-        flash("User successfully deleted.")
+    db.session.delete(user)
+    db.session.commit()
+    
+    flash("User successfully deleted.")
 
     return redirect("/users")
