@@ -9,6 +9,9 @@
 <h2>{{ user.full_name }}</h2>
 
 <a class="btn btn-primary" href="/users/{{ user.id }}/edit" role="button">Edit</a>
-<a class="btn btn-danger" href="/users/{{ user.id }}/delete" role="button">Delete</a>
+<form action="{{ user.id }}/delete" method="POST">
+    <input type="hidden">
+    <button class="btn btn-danger" type="submit">Delete</button>
+</form>
 
 {% endblock %}
