@@ -1,14 +1,14 @@
 {% extends 'base.jinja'%}
 
-{% block title %} User Details {% endtitle %}
+{% block title %} User Details {% endblock %}
 
 {% block content %}
 
 <!-- two buttons, one text line, one area for image-->
-<img src="{{ image_url }}" height="200px" width="200px">
+<img src="{{ img_url }}" height="auto" width="200px">
 <h2>{{ user_name }}</h2>
 
-<a class="btn btn-primary" href="/" role="button">Edit</a>
-<a class="btn btn-danger" href="/" role="button">Delete</a>
+<a class="btn btn-primary" href="/users/{{ user_id }}/edit" role="button">Edit</a>
+<a class="btn btn-danger" href="/users/{{ user_id }}/delete" role="button">Delete</a>
 
 {% endblock %}
