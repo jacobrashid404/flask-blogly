@@ -9,7 +9,14 @@
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+
+{% for msg in get_flashed_messages() %}
+    <div class="alert">{{ msg }}</div>
+{% endfor %}
+
   {% block content %}
   {% endblock %}
+
+
 </body>
 </html>
