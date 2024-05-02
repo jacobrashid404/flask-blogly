@@ -1,11 +1,13 @@
 {% extends 'base.jinja'%}
 
-{% block title %} User Detail Page {% endtitle %}
+{% block title %} User Details {% endtitle %}
 
 {% block content %}
 
 <!-- two buttons, one text line, one area for image-->
-
-
+<img src="{{ image_url }}" height="200px" width="200px">
+<h2>{{ user_name }}</h2>
+<button class="btn btn-primary">Edit</button>
+<button class="btn btn-danger"></button>
 
 {% endblock %}
