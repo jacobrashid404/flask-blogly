@@ -2,7 +2,7 @@
 
 import os
 
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, flash, redirect, render_template
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.exceptions import NotFound
 
@@ -36,11 +36,15 @@ def show_user_list():
 
 @app.get("/users/new")
 def show_add_user_form():
+    """ Show new user form."""
+
     return render_template("new_user_form.jinja")
 
 
 @app.post("/users/new")
 def add_user_from_form():
+    """ Process the add form, add new user to db, and redirect to /users. """
+
     first_name = request.form['first_name']
     last_name = request.form['last_name'] or None
     img_url = request.form['user_image'] or None
@@ -60,19 +64,23 @@ def add_user_from_form():
 def show_user_detail(user_id):
     """ Show information about given user. """
 
-    # query db for user instance's id
     q = (
         db.select(User)
         .where(User.id == user_id)
     )
-    
-    #error handle query selector
-    user = dbx(q).scalar().first()
-    
-    user_name = user.get_full_name()
-    img_url = user.img_url
 
-    return render_template("user_detail.jinja", user_name=user_name, img_url=img_url)
+    user = dbx(q).scalar().first()
+
+    # will handle an invalid user_id
+    if user == None:
+        flash("User not found :-(")
+        return redirect("/")
+
+    else:
+        user_name = user.get_full_name()
+        img_url = user.img_url
+        return render_template(
+            "user_detail.jinja", user_name=user_name, img_url=img_url)
 
 
 @app.get("/users/<int:user_id>/edit")
