@@ -31,8 +31,13 @@ def redirect_to_users():
 @app.get("/users")
 def show_user_list():
     """Show user list"""
-
-    return render_template("users.jinja")
+    
+    q = (
+        db.select(User)
+    )
+    users = dbx(q).scalars().all()
+    
+    return render_template("users.jinja", users=users)
 
 
 @app.get("/users/new")
@@ -70,7 +75,7 @@ def show_user_detail(user_id):
         .where(User.id == user_id)
     )
 
-    user = dbx(q).scalar().first()
+    user = dbx(q).scalars().first()
 
     # will handle an invalid user_id
     if user == None:
@@ -93,7 +98,7 @@ def show_edit_page(user_id):
         .where(User.id == user_id)
     )
 
-    user = dbx(q).scalar().first()
+    user = dbx(q).scalars().first()
 
     # will handle an invalid user_id
     # TODO: check whether we need to validate any form data further
