@@ -31,12 +31,12 @@ def redirect_to_users():
 @app.get("/users")
 def show_user_list():
     """Show user list"""
-    
+
     q = (
         db.select(User)
     )
     users = dbx(q).scalars().all()
-    
+
     return render_template("users.jinja", users=users)
 
 
@@ -83,10 +83,8 @@ def show_user_detail(user_id):
         return redirect("/")
 
     else:
-        user_name = user.full_name
-        img_url = user.img_url
         return render_template(
-            "user_detail.jinja", user_name=user_name, img_url=img_url)
+            "user_detail.jinja", user=user)
 
 
 @app.get("/users/<int:user_id>/edit")
@@ -106,13 +104,19 @@ def show_edit_page(user_id):
         flash("User not found :-(")
         return redirect("/")
 
+    # method 2: passing as user instance
     else:
-        user_id = user.id
-        first_name = user.first_name
-        last_name = user.last_name
-        img_url = user.img_url
         return render_template(
-            "edit_profile.jinja", first_name=first_name, last_name=last_name, img_url=img_url, user_id=user_id)
+            "edit_profile.jinja", user=user)
+
+    # method 1: passing as individual properties
+    # else:
+        # user_id = user.id
+        # first_name = user.first_name
+        # last_name = user.last_name
+        # img_url = user.img_url
+        # return render_template(
+        # "edit_profile.jinja", first_name=first_name, last_name=last_name, img_url=img_url, user_id=user_id)
 
 
 @app.post("/users/<int:user_id>/edit")
@@ -125,7 +129,7 @@ def process_edit_form(user_id):
         .where(User.id == user_id)
     )
 
-    user = dbx(q).scalar().first()
+    user = dbx(q).scalars().first()
 
     # will handle an invalid user_id
     if user == None:
