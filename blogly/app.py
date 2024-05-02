@@ -86,5 +86,60 @@ def show_user_detail(user_id):
 @app.get("/users/<int:user_id>/edit")
 def show_edit_page(user_id):
     """ Show the edit page for a user. """
+    
+    q = (
+        db.select(User)
+        .where(User.id == user_id)
+    )
 
-    return render_template("edit_profile.jinja", )
+    user = dbx(q).scalar().first()
+
+    # will handle an invalid user_id
+    if user == None:
+        flash("User not found :-(")
+        return redirect("/")
+
+    else:
+        user_id = user.id
+        first_name = user.first_name
+        last_name = user.last_name
+        img_url = user.img_url
+        return render_template(
+            "edit_profile.jinja", first_name=first_name, last_name=last_name, img_url=img_url, user_id=user_id)
+
+
+@app.post("/users/<int:user_id>/edit")
+def process_edit_form(user_id):
+    """Process edit user form => Get data from form and update database
+    with new user information"""
+    
+    q = (
+        db.select(User)
+        .where(User.id == user_id)
+    )
+
+    user = dbx(q).scalar().first()
+
+    # will handle an invalid user_id
+    if user == None:
+        flash("User not found :-(")
+        
+    else:
+        #get form data
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        img_url = request.form['img_url']
+        
+        #update database with new values
+        user.first_name = first_name
+        user.last_name = last_name
+        user.img_url = img_url
+        
+        db.session.commit()
+    
+    return redirect("/")
+    
+    
+
+    
+    
