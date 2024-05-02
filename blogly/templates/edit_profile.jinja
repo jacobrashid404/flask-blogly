@@ -10,25 +10,24 @@
 
 <div class="form-group">
     <label>
-        <input class="form-control" name="first_name" type="text" value="">
+        <input class="form-control" name="first_name" type="text" value="{{ first_name }}">
     </label>
 </div>
 
 <div class="form-group">
     <label>
-      <input name="last_name" type="text" value="">
+      <input class="form-control" name="last_name" type="text" value="{{ last_name }}">
     </label>
 </div>
 
 <div class="form-group">
     <label>
-        <input name="image_url" type="url" value="">
+        <input class="form-control" name="image_url" type="url" value="{{ img_url }}">
     </label>
 </div>
 
-<p></p>
-<button>Cancel</button>
-<button>Save</button>
+<button class="btn btn-outline-danger">Cancel</button>
+<button class="btn btn-success">Save</button>
 </form>
 
 
