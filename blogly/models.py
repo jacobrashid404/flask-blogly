@@ -30,7 +30,8 @@ class User(db.Model):
         db.String(500)
     )
 
-    def get_full_name(self):
+    @property
+    def full_name(self):
         """ Generate full name from user's first and last names."""
 
         return f"{self.first_name} {self.last_name}"
