@@ -61,10 +61,18 @@ def show_user_detail(user_id):
     """ Show information about given user. """
 
     # query db for user instance's id
+    q = (
+        db.select(User)
+        .where(User.id == user_id)
+    )
+    
+    #error handle query selector
+    user = dbx(q).scalar().first()
+    
+    user_name = user.get_full_name()
+    img_url = user.img_url
 
-    #
-
-    return render_template("user_detail.jinja", )
+    return render_template("user_detail.jinja", user_name=user_name, img_url=img_url)
 
 
 @app.get("/users/<int:user_id>/edit")
