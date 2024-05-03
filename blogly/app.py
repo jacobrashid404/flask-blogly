@@ -32,6 +32,8 @@ def redirect_to_users():
 def show_user_list():
     """Show user list"""
 
+    # TODO: sort users by first and last names
+    # TODO: fix formatting for 37-38
     q = (
         db.select(User)
     )
@@ -54,6 +56,7 @@ def add_user_from_form():
     first_name = request.form['first_name']
     last_name = request.form['last_name'] or None
     img_url = request.form['user_image'] or None
+    # None turns into NULL in db bc we made it nullable, then back to None in template
 
     user = User(
         first_name=first_name,
@@ -105,10 +108,12 @@ def process_edit_form(user_id):
     user.last_name = last_name
     user.img_url = img_url
 
+    # FIXME: Have commit happen before flash
     flash(f"User details for {user.full_name} updated.")
 
     db.session.commit()
 
+    # TODO: fix redirect to /users before writing tests
     return redirect("/")
 
 
@@ -120,7 +125,7 @@ def delete_user(user_id):
 
     db.session.delete(user)
     db.session.commit()
-    
+
     flash("User successfully deleted.")
 
     return redirect("/users")
