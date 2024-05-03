@@ -6,7 +6,10 @@ os.environ["FLASK_DEBUG"] = "0"
 from unittest import TestCase
 
 from app import app
-from models import db, dbx, DEFAULT_IMAGE_URL, User
+
+#removed base img URL because we dont have one yet
+from models import db, dbx, User 
+
 
 # Make Flask errors be real errors, rather than HTML pages with error info
 app.config['TESTING'] = True
@@ -37,7 +40,7 @@ class UserViewTestCase(TestCase):
         test_user = User(
             first_name="test1_first",
             last_name="test1_last",
-            image_url=None,
+            img_url=None,
         )
 
         db.session.add(test_user)
@@ -61,3 +64,16 @@ class UserViewTestCase(TestCase):
             html = resp.get_data(as_text=True)
             self.assertIn("test1_first", html)
             self.assertIn("test1_last", html)
+    
+    def test_add_new_user(self):
+        with app.test_client() as client:
+            user = {
+                "first_name": "Tim",
+                "last_name": "Burton",
+                "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Tim_Burton_%287587109150%29.jpg/440px-Tim_Burton_%287587109150%29.jpg",
+            }
+            resp = client.post("/users/new", data=user, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<div class="alert">', html)
