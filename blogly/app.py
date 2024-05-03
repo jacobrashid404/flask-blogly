@@ -31,12 +31,8 @@ def redirect_to_users():
 @app.get("/users")
 def show_user_list():
     """Show user list"""
-
-    # TODO: sort users by first and last names
-    # TODO: fix formatting for 37-38
-    q = (
-        db.select(User)
-    )
+    
+    q = (db.select(User).order_by(User.last_name, User.first_name))
     users = dbx(q).scalars().all()
 
     return render_template("users.jinja", users=users)
@@ -54,8 +50,8 @@ def add_user_from_form():
     """ Process the add form, add new user to db, and redirect to /users. """
 
     first_name = request.form['first_name']
-    last_name = request.form['last_name'] or None
-    img_url = request.form['user_image'] or None
+    last_name = request.form['last_name']
+    img_url = request.form['img_url'] or None
     # None turns into NULL in db bc we made it nullable, then back to None in template
 
     user = User(
@@ -65,6 +61,8 @@ def add_user_from_form():
     )
     db.session.add(user)
     db.session.commit()
+    
+    flash(f"User {first_name} {last_name} created successfully!")
 
     return redirect("/users")
 
@@ -82,11 +80,10 @@ def show_user_detail(user_id):
 @app.get("/users/<int:user_id>/edit")
 def show_edit_page(user_id):
     """ Show the edit page for a user. """
-
+    
+    # will handle an invalid user_id
     user = db.get_or_404(User, user_id)
 
-    # will handle an invalid user_id
-    # TODO: check whether we need to validate any form data further
     return render_template(
         "edit_profile.jinja", user=user)
 
@@ -108,13 +105,11 @@ def process_edit_form(user_id):
     user.last_name = last_name
     user.img_url = img_url
 
-    # FIXME: Have commit happen before flash
+    db.session.commit()
+    
     flash(f"User details for {user.full_name} updated.")
 
-    db.session.commit()
-
-    # TODO: fix redirect to /users before writing tests
-    return redirect("/")
+    return redirect("/users")
 
 
 @app.post("/users/<int:user_id>/delete")
