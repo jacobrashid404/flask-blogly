@@ -22,12 +22,11 @@ class User(db.Model):
         nullable=False,
     )
 
-    # TODO: make nullable=false
     last_name = db.mapped_column(
         db.String(50),
+        nullable=False
     )
 
-    # TODO: when adding a default img url, change to nullable=false
     img_url = db.mapped_column(
         db.String(500)
     )
